@@ -52,13 +52,13 @@ CloudWatch 지표 기반 자동 확장
 1. **Target Tracking Scaling** (가장 추천)
 - 특정 지표의 목표값을 유지하도록 자동 조정
 - 예: CPU 50% 유지
-1. **Step Scaling**
+2. **Step Scaling**
 - CloudWatch 경보의 단계(조건)에 따라 단계별 확장
 - 예: CPU > 70% → +2
     
     CPU > 90% → +4
     
-1. **Simple Scaling**
+3. **Simple Scaling**
 - 경보 발생 시 일정 수량 증가/감소
 - 쿨다운(cooldown) 필요
 
