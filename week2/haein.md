@@ -49,8 +49,21 @@
   다른 도메인 이름이 정적 콘텐츠에 대한 가속기 DNS 이름을 가리키도록 합니다. 도메인
   이름을 웹 애플리케이션의 끝점으로 사용합니다.
 
-  내가 생각한 답 : 
-  해설 : 
+  내가 생각한 답 : A -> CloudFront가 S3 + ALB 둘 다 오리진으로 가지고 Route53 -> CloudFront 배포 도메인으로만 연결 가능하다.
+  해설 : A -> 
+    A(O) : 배포를 만들 때 CloudFront 가 파일에 대한 요청을 보내는 원본을 지정합니다.
+    CloudFront 에서 여러 원본을 사용할 수 있습니다. 예를 들어 Amazon S3 버킷, MediaStore
+    컨테이너, MediaPackage 채널, Application Load Balancer 또는 AWS Lambda 함수 URL 을
+    사용할 수 있습니다.
+    https://docs.aws.amazon.com/ko_kr/AmazonCloudFront/latest/DeveloperGuide/Download
+    DistS3AndCustomOrigins.html
+    Amazon Route 53 을 구성하여 CloudFront 배포로 트래픽을 라우팅합니다. 이하 항목 참고
+    https://docs.aws.amazon.com/ko_kr/Route53/latest/DeveloperGuide/routing-to-cloudfro
+    nt-distribution.html
+    B(X) : 지문의 상황은 애플리케이션 계층에서 벌어지는 일이므로 TCP/UDP 를 사용하는
+    AWS Global Accelerator 는 부적절.
+    C(X) : B 와 같은 이유로 오답.
+    D(X) : B 와 같은 이유로 오답.
 
 #Q4 - VPC
   애플리케이션은 VPC 의 Amazon EC2 인스턴스에서 실행됩니다. 애플리케이션은 Amazon
@@ -63,8 +76,8 @@
   D. S3 엔드포인트에 액세스하기 위한 프라이빗 링크가 있는 Amazon API Gateway API 를
   생성합니다.
 
-  내가 생각한 답 : 
-  해설 : 
+  내가 생각한 답 : A -> EC2 인스턴스는 인터넷 연결 없이 S3 버킷에 엑세스 해야 하므로 S3 버킷에 대한 게이트웨이 VPC 엔드포인트를 사용하는게 적절하다고 생각했다.
+  해설 : A -> VPC-S3 간 인터넷을 통하지 않는 연결 = S3 VPC Gateway Endpoint. 정답은 A.
 
 #Q1 - S3
   회사는 여러 대륙에 걸쳐 도시의 온도, 습도 및 대기압에 대한 데이터를 수집합니다.
@@ -86,8 +99,17 @@
   스냅샷을 만들어 대상 S3 버킷이 포함된 리전에 복사합니다. 해당 리전에서 EBS 볼륨을
   복원합니다.
 
-  내가 생각한 답 : 
-  해설 : 
+  내가 생각한 답 : A -> S3 Transfer Acceleration을 사용하는게 가장 빠르고 운영 복잡성을 줄일 수 있는 방법이라고 생각했습니다.
+  해설 : A -> 
+    여러 글로벌 사이트의 데이터를 단일 Amazon S3 버킷에 최대한 빨리 집계하는 동시에
+    운영 복잡성을 최소화하려면 가장 적합한 솔루션은 옵션 A: 대상 S3 버킷에서 S3 전송
+    가속화를 설정하고 멀티파트 업로드를 사용하여 사이트 데이터를 대상 S3 버킷에 직접
+    업로드하는 것입니다.
+    요약하면 옵션 A 는 여러 글로벌 사이트의 데이터를 단일 Amazon S3 버킷으로 신속하게
+    집계하는 가장 효율적이고 운영상 간단한 솔루션을 제공합니다. S3 Transfer Acceleration 및
+    멀티파트 업로드를 활용하여 회사는 복잡성을 최소화하면서 빠른 데이터 수집을 달성할 수
+    있습니다.
+
 
 #Q14 - RDS
   회사는 Application Load Balancer 뒤의 Amazon EC2 인스턴스에서 전자 상거래
@@ -107,8 +129,17 @@
   Auto Scaling 을 구성합니다.
   D. EC2 스팟 인스턴스와 함께 Memcached 용 Amazon ElastiCache 를 사용합니다.
 
-  내가 생각한 답 : 
-  해설 : 
+  내가 생각한 답 : C -> 고가용성을 유지하면서 예측할 수 없는 읽기 워크로드의 수요를 충족하려면 분산이 가능한 Aurora를 사용하는게 적합하다고 생각
+  해설 : C -> 
+    A(X) : 단일 노드에서 고가용성 불만족. RedShift 는 MySQL 과 같은 관계형 데이터베이스
+    서비스가 아니라 데이터 웨어하우스 서비스.
+    B(X) : 단일 AZ 이기 때문에 고가용성 불만족.
+    C(O) : Aurora 는 자동으로 3 개의 AZ 에 6 개의 복제본을 생성. 이러한 복제본은 읽기 부하
+    분산 효과가 있음.
+    D(X) : 스팟 인스턴스를 사용할 때는 언제든 중지될 위험에 대비해야 함이 기본임. 즉,
+    중지될 수 있는 위험이 높은 인스턴스라는 이야기. 그리고 다중 AZ 를 사용하지 않으므로
+    고가용성을 만족하지 못했음.
+
 
 #Q18 - Lambda
   애플리케이션 개발 팀은 큰 이미지를 더 작은 압축 이미지로 변환하는 마이크로서비스를
@@ -132,5 +163,16 @@
   모니터링합니다. 이미지가 업로드되면 추가 처리를 위해 애플리케이션 소유자의 이메일
   주소와 함께 Amazon ample Notification Service(Amazon SNS) 주제에 알림을 보냅니다.
 
-  내가 생각한 답 : 
-  해설 : 
+  내가 생각한 답 : D, E? -> EventBridge 로 모니터링 하거나, SQS 대기열을 사용하는게 적합하다고 생각했다. 
+  해설 : A, B ->
+    A,E 조합으로 S3 버킷->EventBridge->SNS Topic->SQS->Lambda 프로세스도 가능하긴
+    한데, A,B 조합으로 S3->SQS->Lambda 가 훨씬 운영 및 비용 효율적.
+    ・S3 Events -> SQS Queue
+    Amazon S3 은 다음과 같은 대상으로 이벤트 알림 메시지를 보낼 수 있습니다....◎Amazon
+    Simple Queue Service(Amazon SQS) 대기열
+    https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/userguide/NotificationHowTo.html
+    ・SQS Queue -> Lambda
+    Lambda 함수를 사용하여 Amazon Simple Queue Service(Amazon SQS) 대기열의 메시지를
+    처리할 수 있습니다.
+    https://docs.aws.amazon.com/ko_kr/lambda/latest/dg/with-sqs.html
+
